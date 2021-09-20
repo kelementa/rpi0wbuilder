@@ -5,12 +5,73 @@
 
 source general.sh
 
+downloadKernel() {
+	if [ -d "$KERNELDIR" ]
+	then
+		# if the kernel directory exists
+		printf "${MAGENTA}The kernel directory exists! Exiting...${NORMAL}\n"
+		exit 1
+	else
+		# if the directory does not exist
+		printf "${MAGENTA}Downloading kernel source...${NORMAL}\n"
+		#git clone --depth=1 https://github.com/raspberrypi/linux $KERNELDIR
+		git clone https://github.com/orangepi-xunlong/OrangePiRDA_external.git $KERNELDIR
+	fi
+}
 
-export pass=218agkaki
+downloadBootFiles() {
+	if [ -d "$BOOTFSDIR" ]
+	then
+		# if the bootfs directory exists
+		printf "${MAGENTA}The bootfs directory exists! Exiting...${NORMAL}\n"
+		exit 1
+	else
+		# if the directory does not exist
+		printf "${MAGENTA}Creating bootfs directory...${NORMAL}\n"
+		mkdir -p $BOOTFSDIR
+		printf "${MAGENTA}Copy boot files...${NORMAL}\n"
+		cp ~/rpi_boot_files.tar.gz $BOOTFSDIR
+		printf "${RED}Extracting boot files...${NORMAL}\n"
+		tar xvzf ~/rpi_boot_files.tar.gz -C $BOOTFSDIR/
+	fi
+}
+
+createConfigTXT() {
+	if [ -d "$BOOTFSDIR" ]
+	then
+		# if the bootfs directory exists
+		rm -rf $BOOTFSDIR/config.txt
+		printf "${RED}Creating config.txt...${NORMAL}\n"
+		cat << EOF >> $BOOTFSDIR/config.txt
+		kernel=zImage
+		enable_uart=1
+		device_tree=bcm2835-rpi-zero-w.dtb
+		dtoverlay=disable-bt
+EOF
+	else
+		printf "${RED}Config.txt already exists.${NORMAL}\n"
+	fi
+}
+createCmdLineTXT() {
+	if [ -d "$BOOTFSDIR" ]
+	then
+		# if the bootfs directory exists
+		printf "${RED}Creating cmdline.txt...${NORMAL}\n"
+		cat << EOF >> $RPI_BOOT/cmdline.txt
+		console=tty1 console=serial0,115200 root=/dev/mmcblk0p2 rootfstype=ext4 rootwait
+EOF
+	else
+
+	fi
+}
+
+
+
 
 
 
 prepare() {
+	# ---
 	printf "${RED}Removing build directory...${NORMAL}\n"
 	rm -rf /home/kelement/rpi
 	printf "${RED}Creating build directory...${NORMAL}\n"
@@ -143,14 +204,18 @@ compressImage() {
 	tar cvzf rpiimage.tar.gz $RPI_BOOT/ $RPI_ROOT/
 }
 
-prepare
-kernelBuild
-copyKernelFiles
-createFiles
-installModules
-busyBox
-addToRootFS
-printf "${GREEN}RPI linux has been built.${NORMAL}\n"
-printf "\n"
-printf "${RED}Do not forget to prepare the SD card by execute createFS.sh, then start copyImage.sh to get the compressed folders on the host.${NORMAL}\n"
+#prepare
+#kernelBuild
+#copyKernelFiles
+#createFiles
+#installModules
+#busyBox
+#addToRootFS
+#printf "${GREEN}RPI linux has been built.${NORMAL}\n"
+#printf "\n"
+#printf "${RED}Do not forget to prepare the SD card by execute createFS.sh, then start copyImage.sh to get the compressed folders on the host.${NORMAL}\n"
 
+
+
+#downloadKernel
+downloadBootFiles
