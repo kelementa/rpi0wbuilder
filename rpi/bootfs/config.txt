@@ -1,5 +1,0 @@
-	kernel=zImage
-	enable_uart=1
-	device_tree=bcm2835-rpi-zero-w.dtb
-	dtoverlay=disable-bt
-
