@@ -44,6 +44,8 @@ downloadRootFS() {
 	echo $pass | sudo -S debootstrap --arch=armel --foreign bullseye $ROOTFSDIR
 	echo $pass | sudo -S cp /usr/bin/qemu-arm-static $ROOTFSDIR/usr/bin/
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "/debootstrap/debootstrap --second-stage"
+	printf "${RED}Installing packages...${NORMAL}\n"
+	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt install -y wpasupplicant net-tools aptitude ca-certificates crda fake-hwclock firmware-brcm80211 gnupg man-db manpages ntp usb-modeswitch ssh wget xy-utils"
 }
 
 
@@ -104,6 +106,20 @@ addFilesToRootFS() {
 	mkdir -p $ROOTFSDIR/etc
 	printf "${RED}Setting up root password...${NORMAL}\n"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "echo -e \"1234\n1234\" | passwd"
+	echo $pass | sudo -S cat << EOF >> $ROOTFSDIR/etc/wpa_supplicant/wpa_supplicant.conf
+	ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+	update_config=1
+	country=HU
+
+	network={
+		ssid="Bubb_L"
+		psk"augusztus"
+		key_mgmt=WPA-PSK
+	}
+EOF
+	echo $pass | sudo -S cat << EOF >> $ROOTFSDIR/etc/apt/sources.list
+	deb http://deb.debian.org/debian bullseye main non-free
+EOF
 		
 }
 
@@ -120,8 +136,8 @@ compressImage() {
 
 firstStage() {
 	# first stage
-	downloadKernel
-	downloadBootFiles
+	#downloadKernel
+	#downloadBootFiles
 	downloadRootFS
 	
 }
@@ -138,3 +154,4 @@ secondStage() {
 }
 
 firstStage
+#secondStage
