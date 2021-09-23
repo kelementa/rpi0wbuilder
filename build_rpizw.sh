@@ -34,12 +34,13 @@ downloadBootFiles() {
 		printf "${MAGENTA}Copy boot files...${NORMAL}\n"
 		cp ~/rpi_boot_files.tar.gz $BOOTFSDIR
 		printf "${RED}Extracting boot files...${NORMAL}\n"
-		tar xvzf ~/rpi_boot_files.tar.gz -C $BOOTFSDIR/
+		tar xzf ~/rpi_boot_files.tar.gz -C $BOOTFSDIR/
 	fi
 }
 
 downloadRootFS() {
 	# stage 1
+	printf "${RED}Starting debootstrap...${NORMAL}\n"
 	echo $pass | sudo -S debootstrap --arch=armel --foreign bullseye $ROOTFSDIR
 	echo $pass | sudo -S cp /usr/bin/qemu-arm-static $ROOTFSDIR/usr/bin/
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "/debootstrap/debootstrap --second-stage"
@@ -48,7 +49,7 @@ downloadRootFS() {
 
 createConfigTXT() {
 	# stage 2
-	printf "${RED}Creating config.txt...${NORMAL}\n"
+	printf "${RED}Creating config.txt in bootfs...${NORMAL}\n"
 	cat << EOF >> $BOOTFSDIR/config.txt
 	kernel=zImage
 	enable_uart=1
@@ -59,7 +60,7 @@ EOF
 
 createCmdLineTXT() {
 	# stage 2
-	printf "${RED}Creating cmdline.txt...${NORMAL}\n"
+	printf "${RED}Creating cmdline.txt in rootfs...${NORMAL}\n"
 	cat << EOF >> $BOOTFSDIR/cmdline.txt
 	console=tty1 console=serial0,115200 root=/dev/mmcblk0p2 rootfstype=ext4 rootwait
 EOF
@@ -67,6 +68,7 @@ EOF
 
 kernelBuild() {
 	# stage 2
+	printf "${RED}Building kernel...${NORMAL}\n"
 	cd $KERNELDIR
 	KERNEL=kernel
 	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- bcmrpi_defconfig
@@ -91,45 +93,22 @@ installModules() {
 	echo $pass | sudo -S env PATH=$PATH make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- INSTALL_MOD_PATH=$ROOTFSDIR modules_install
 }
 
-busyBox() {
-export RPI_DIR=/home/kelement/rpi
-export RPI_BOOT=$RPI_DIR/boot
-export RPI_ROOT=$RPI_DIR/root
-export RPI_KERNEL=$RPI_DIR/linux
-export RPI_BUSYBOX=$RPI_DIR/busybox
-printf "${RED}Downloading busybox...${NORMAL}\n"
-git clone git://busybox.net/busybox.git --branch=1_33_0 --depth=1 $RPI_BUSYBOX
-cd $RPI_BUSYBOX
-# Settings -> Build static binary (no shared libraries) -> enable
-# Settings -> Cross compiler prefix -> arm-linux-gnueabihf-
-# Settings -> Destination path for ‘make install’ -> $RPI_ROOT
-printf "${RED}Set default config...${NORMAL}\n"
-make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- defconfig
-sed -i 's/CONFIG_PREFIX=".\/_install"/CONFIG_PREFIX="\/home\/kelement\/rpi\/root"/g' .config
-sed -i 's/CONFIG_CROSS_COMPILER_PREFIX=""/CONFIG_CROSS_COMPILER_PREFIX="arm-linux-gnueabi-"/g' .config
-sed -i 's/# CONFIG_STATIC is not set/CONFIG_STATIC=y/g' .config
-printf "${RED}Building...${NORMAL}\n"
-make -j4 ARCH=arm CROSS_COMPILE=arm-linux-gnueabi-
-printf "${RED}Install busybox...${NORMAL}\n"
-make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- install
-}
+
 
 addFilesToRootFS() {
 	# stage 2
-	printf "${RED}Adding files to FS directory...${NORMAL}\n"
+	printf "${RED}Adding files and parameters to rootfs directory...${NORMAL}\n"
 	mkdir -p $ROOTFSDIR/proc
 	mkdir -p $ROOTFSDIR/sys
 	mkdir -p $ROOTFSDIR/dev
 	mkdir -p $ROOTFSDIR/etc
-	#mkdir -p $ROOTFSDIR/etc/init.d
-	#echo $pass | sudo -S touch $ROOTFSDIR/etc/init.d/rcS
-	#echo $pass | sudo -S printf "#!/bin/sh\nmount -t proc none /proc\nmount-t sysfs none /sys\necho /sbin/mdev > /proc/sys/kernel/hotplug\nmdev -s" >>$ROOTFSDIR/etc/init.d/rcS
-	#echo $pass | sudo -S chmod +x $ROOTFSDIR/etc/init.d/rcS
-	
+	printf "${RED}Setting up root password...${NORMAL}\n"
+	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "echo -e \"1234\n1234\" | passwd"
+		
 }
 
 compressImage() {
-	printf "${RED}Compressing the system...${NORMAL}\n"
+	printf "${RED}Compressing the built system...${NORMAL}\n"
 	echo $pass | sudo -S tar cvzf $ROOTDIR/rpiimage.tar.gz $BOOTFSDIR/ $ROOTFSDIR/
 }
 
