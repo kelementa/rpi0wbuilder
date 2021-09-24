@@ -23,3 +23,5 @@ ROOTDIR=${TOPDIR}/rpi
 KERNELDIR=${ROOTDIR}/linux
 BOOTFSDIR=${ROOTDIR}/bootfs
 ROOTFSDIR=${ROOTDIR}/rootfs
+
+echo $pass | sudo -S "sudo apt install -y build-essential gcc bison bc gcc-arm-linux-gnueabi mc git debootstrap qemu-system-arm qemu-user-static"
