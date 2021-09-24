@@ -125,7 +125,7 @@ EOF
 
 compressImage() {
 	printf "${RED}Compressing the built system...${NORMAL}\n"
-	echo $pass | sudo -S tar cvzf $ROOTDIR/rpiimage.tar.gz $BOOTFSDIR/ $ROOTFSDIR/
+	echo $pass | sudo -S tar czf $ROOTDIR/rpiimage.tar.gz $BOOTFSDIR/ $ROOTFSDIR/
 }
 
 
