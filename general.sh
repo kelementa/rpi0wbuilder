@@ -24,4 +24,4 @@ KERNELDIR=${ROOTDIR}/linux
 BOOTFSDIR=${ROOTDIR}/bootfs
 ROOTFSDIR=${ROOTDIR}/rootfs
 
-echo $pass | sudo -S "apt install -y build-essential gcc bison bc gcc-arm-linux-gnueabi mc git debootstrap qemu-system-arm qemu-user-static"
+echo $pass | sudo -S apt install -y build-essential gcc bison bc gcc-arm-linux-gnueabi mc git debootstrap qemu-system-arm qemu-user-static
