@@ -190,7 +190,7 @@ if [[ $# = 0 ]]; then
 	exit 1
 fi
 
-while getopts hfs options; do
+while getopts hfscr options; do
 	case $options in
 		h)
 			print_usage
