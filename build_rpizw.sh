@@ -75,12 +75,15 @@ createCmdLineTXT() {
 EOF
 }
 
+
+
 kernelBuild() {
 	# stage 2
 	printf "${RED}Building kernel...${NORMAL}\n"
 	cd $KERNELDIR
 	KERNEL=kernel
 	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- bcmrpi_defconfig
+	sed -i 's/# CONFIG_USB_OTG is not set/CONFIG_USB_OTG=y/g' $KERNELDIR/.config
 	make -j12 ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- zImage modules dtbs
 }
 
