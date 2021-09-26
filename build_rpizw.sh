@@ -56,7 +56,7 @@ downloadRootFS() {
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt install -y software-properties-common"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt-add-repository non-free"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt update"
-	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt install -y keyboard-configuration console-setup firmware-brcm80211 wpasupplicant net-tools aptitude ca-certificates crda fake-hwclock gnupg man-db manpages ntp usb-modeswitch ssh wget xz-utils locales"
+	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "DEBIAN_FRONTEND=noninteractive apt install -y keyboard-configuration console-setup firmware-brcm80211 wpasupplicant net-tools aptitude ca-certificates crda fake-hwclock gnupg man-db manpages ntp usb-modeswitch ssh wget xz-utils locales"
 }
 
 
@@ -92,6 +92,18 @@ kernelBuild() {
 	KERNEL=kernel
 	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- bcmrpi_defconfig
 	scripts/config --enable CONFIG_USB_OTG --disable USB_OTG_FSM --disable USB_ZERO_HNPTEST
+	make -j12 ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- zImage modules dtbs
+}
+
+kernelRebuild() {
+	# stage 2
+	printf "${RED}Rebuilding kernel...${NORMAL}\n"
+	cd $KERNELDIR
+	KERNEL=kernel
+	make clean
+	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- bcmrpi_defconfig
+	scripts/config --enable CONFIG_USB_OTG --disable USB_OTG_FSM --disable USB_ZERO_HNPTEST
+	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- menuconfig
 	make -j12 ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- zImage modules dtbs
 }
 
@@ -169,6 +181,7 @@ print_usage() {
 		-f first stage
 		-s second stage
 		-c compress the built directory
+		-r clean and rebuild kernel with menuconfig
 EOF
 }
 
@@ -191,6 +204,9 @@ while getopts hfs options; do
 			;;
 		c)
 			compressImage
+			;;
+		r)
+			kernelRebuild
 			;;
 		*)
 			 printf "${RED}Unknown parameter added ${NORMAL}\n"
