@@ -180,7 +180,7 @@ while getopts hfs options; do
 			echo "secondStage"
 			;;
 		*)
-			 printf "${RED}Unknown parameter added: $options${NORMAL}\n"
+			 printf "${RED}Unknown parameter added ${NORMAL}\n"
 			 exit 1
 		esac
 done
