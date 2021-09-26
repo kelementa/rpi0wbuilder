@@ -84,7 +84,7 @@ kernelBuild() {
 	cd $KERNELDIR
 	KERNEL=kernel
 	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- bcmrpi_defconfig
-	/scripts/config --enable CONFIG_USB_OTG --disable USB_OTG_FSM --disable USB_ZERO_HNPTEST
+	scripts/config --enable CONFIG_USB_OTG --disable USB_OTG_FSM --disable USB_ZERO_HNPTEST
 	make -j12 ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- zImage modules dtbs
 }
 
