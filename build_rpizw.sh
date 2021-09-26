@@ -108,9 +108,8 @@ addFilesToRootFS() {
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "echo -e \"1234\n1234\" | passwd"
 	echo $pass | sudo -S bash -c 'printf "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=HU\n\nnetwork={\n\t	ssid="Bubb_L"\n\t
 	psk"augusztus"\n\t	key_mgmt=WPA-PSK\n}\n" > $ROOTFS/etc/wpa_supplicant/wpa_supplicant.conf'
-	echp $pass | sudo -S bash -c 'printf "deb http://deb.debian.org/debian bullseye main non-free" > $ROOTFSDIR/etc/apt/sources.list'
+	echo $pass | sudo -S bash -c 'printf "deb http://deb.debian.org/debian bullseye main non-free" > $ROOTFSDIR/etc/apt/sources.list'
 	
-EOF
 		
 }
 
