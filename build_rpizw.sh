@@ -5,8 +5,12 @@
 
 source general.sh
 
-echo $pass | sudo -S apt install -y build-essential gcc bison bc gcc-arm-linux-gnueabi mc git debootstrap qemu-system-arm qemu-user-static
-echo $pass | sudo -S apt autoremove -y
+installPackagesOnHost() {
+	echo $pass | sudo -S apt install -y build-essential gcc bison bc gcc-arm-linux-gnueabi mc git debootstrap qemu-system-arm qemu-user-static
+	echo $pass | sudo -S apt autoremove -y
+}
+
+
 
 downloadKernel() {
 	# stage 1
@@ -129,6 +133,7 @@ compressImage() {
 
 firstStage() {
 	# first stage
+	installPackagesOnHost
 	downloadKernel
 	downloadBootFiles
 	downloadRootFS
