@@ -5,6 +5,9 @@
 
 source general.sh
 
+echo $pass | sudo -S apt install -y build-essential gcc bison bc gcc-arm-linux-gnueabi mc git debootstrap qemu-system-arm qemu-user-static
+echo $pass | sudo -S apt autoremove -y
+
 downloadKernel() {
 	# stage 1
 	if [ -d "$KERNELDIR" ]
@@ -134,14 +137,48 @@ firstStage() {
 
 secondStage() {
 	# second stage
-	#kernelBuild
-	#copyKernelFiles
-	#installModules
-	#createConfigTXT
-	#createCmdLineTXT
+	kernelBuild
+	copyKernelFiles
+	installModules
+	createConfigTXT
+	createCmdLineTXT
 	addFilesToRootFS
 	compressImage
 }
 
-#firstStage
-secondStage
+print_usage() {
+	cat << EOF
+	Usage: $0 <options>
+		-h show help
+		-f first stage
+		-s second stage
+EOF
+}
+
+if [[ $# = 0 ]]; then
+	print_usage
+	exit 1
+fi
+
+while getopts hfs options; do
+	case $options in
+		h)
+			print_usage
+			exit 1
+			;;
+		f)
+			echo "firstStage"
+			#firstStage
+			;;
+		s)
+			#secondStage
+			echo "secondStage"
+			;;
+		*)
+			 "${RED}Unknown parameter added: $options${NORMAL}\n"
+			 exit 1
+		esac
+done
+			
+
+
