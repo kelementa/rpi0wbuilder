@@ -172,12 +172,10 @@ while getopts hfs options; do
 			exit 1
 			;;
 		f)
-			echo "firstStage"
-			#firstStage
+			firstStage
 			;;
 		s)
-			#secondStage
-			echo "secondStage"
+			secondStage
 			;;
 		*)
 			 printf "${RED}Unknown parameter added ${NORMAL}\n"
