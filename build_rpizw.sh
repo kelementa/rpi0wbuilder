@@ -136,8 +136,8 @@ addFilesToRootFS() {
 	mkdir -p $ROOTFSDIR/etc
 	printf "${RED}Setting up root password...${NORMAL}\n"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "echo -e \"1234\n1234\" | passwd"
-	echo $pass | sudo -S bash -c 'printf "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=HU\n\nnetwork={\n\t	ssid="Bubb_L"\n\t
-	psk"augusztus"\n\t	key_mgmt=WPA-PSK\n}\n" > $ROOTFS/etc/wpa_supplicant/wpa_supplicant.conf'
+	printf "${RED}Creating wpa_supplicant config...${NORMAL}\n"
+	echo $pass | sudo sh -c 'printf "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=HU\nnetwork={\nssid=Bubb_L\npsk augusztus\nkey_mgmt=WPA-PSK\n}\n" > rpi/rootfs/etc/wpa_supplicant/wpa_supplicant.conf'
 	echo $pass | sudo -S bash -c 'printf "deb http://deb.debian.org/debian bullseye main non-free" > $ROOTFSDIR/etc/apt/sources.list'
 	
 		
@@ -182,6 +182,7 @@ print_usage() {
 		-s second stage
 		-c compress the built directory
 		-r clean and rebuild kernel with menuconfig
+		-a add files to root FS
 EOF
 }
 
@@ -190,7 +191,7 @@ if [[ $# = 0 ]]; then
 	exit 1
 fi
 
-while getopts hfscr options; do
+while getopts hfscra options; do
 	case $options in
 		h)
 			print_usage
@@ -207,6 +208,9 @@ while getopts hfscr options; do
 			;;
 		r)
 			kernelRebuild
+			;;
+		a)
+			addFilesToRootFS
 			;;
 		*)
 			 printf "${RED}Unknown parameter added ${NORMAL}\n"
