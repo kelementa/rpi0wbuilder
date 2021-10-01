@@ -57,6 +57,10 @@ downloadRootFS() {
 	echo $pass | sudo -S debootstrap --arch=armel --foreign bullseye $ROOTFSDIR http://127.0.0.1:9999/debian
 	echo $pass | sudo -S cp /usr/bin/qemu-arm-static $ROOTFSDIR/usr/bin/
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "/debootstrap/debootstrap --second-stage"
+	printf "${RED}Setting up locales...${NORMAL}\n"
+	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'echo "hu_HU.UTF-8 UTF-8" > /etc/locale.gen'
+	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'LANG="hu_HU.UTF-8"'
+	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'locale-gen'
 	printf "${RED}Disabling cert checking temporally...${NORMAL}\n"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "echo 'Acquire::https::deb.debian.org::Verify-Peer "false";' > /etc/apt/apt.conf.d/99debianorg-cert"
 	printf "${RED}Creating sources.list...${NORMAL}\n"
