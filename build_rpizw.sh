@@ -49,7 +49,7 @@ downloadRootFS() {
 	# stage 1
 	printf "${RED}Starting debootstrap...${NORMAL}\n"
 	export http_proxy=http://127.0.0.1:8000
-	echo $pass | sudo -S debootstrap --arch=armel --foreign bullseye $ROOTFSDIR
+	echo $pass | sudo -S debootstrap --arch=armel --foreign bullseye $ROOTFSDIR http://127.0.0.1:9999/debian
 	echo $pass | sudo -S cp /usr/bin/qemu-arm-static $ROOTFSDIR/usr/bin/
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "/debootstrap/debootstrap --second-stage"
 	printf "${RED}Disabling cert checking temporally...${NORMAL}\n"
