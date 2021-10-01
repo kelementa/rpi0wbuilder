@@ -59,6 +59,8 @@ downloadRootFS() {
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "/debootstrap/debootstrap --second-stage"
 	printf "${RED}Disabling cert checking temporally...${NORMAL}\n"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "echo 'Acquire::https::deb.debian.org::Verify-Peer "false";' > /etc/apt/apt.conf.d/99debianorg-cert"
+	printf "${RED}Creating sources.list...${NORMAL}\n"
+	echo $pass | sudo -S bash -c 'printf "deb http://127.0.0.1:9999/debian bullseye main non-free" > $ROOTFSDIR/etc/apt/sources.list'
 	printf "${RED}Installing software-properites-common...${NORMAL}\n"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt install -y software-properties-common"
 	printf "${RED}Adding non-free repository...${NORMAL}\n"
@@ -148,7 +150,7 @@ addFilesToRootFS() {
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "echo -e \"1234\n1234\" | passwd"
 	printf "${RED}Creating wpa_supplicant config...${NORMAL}\n"
 	echo $pass | sudo sh -c 'printf "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=HU\nnetwork={\nssid=Bubb_L\npsk augusztus\nkey_mgmt=WPA-PSK\n}\n" > rpi/rootfs/etc/wpa_supplicant/wpa_supplicant.conf'
-	echo $pass | sudo -S bash -c 'printf "deb http://deb.debian.org/debian bullseye main non-free" > $ROOTFSDIR/etc/apt/sources.list'
+	
 	
 		
 }
