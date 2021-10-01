@@ -63,8 +63,8 @@ downloadRootFS() {
 	echo $pass | sudo -S bash -c 'printf "deb http://127.0.0.1:9999/debian bullseye main non-free" > $ROOTFSDIR/etc/apt/sources.list'
 	printf "${RED}Installing software-properites-common...${NORMAL}\n"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt install -y software-properties-common"
-	printf "${RED}Adding non-free repository...${NORMAL}\n"
-	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt-add-repository non-free"
+	#printf "${RED}Adding non-free repository...${NORMAL}\n"
+	#echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt-add-repository non-free"
 	printf "${RED}Updating packages...${NORMAL}\n"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt update"
 	printf "${RED}Installing packages...${NORMAL}\n"
