@@ -17,8 +17,8 @@ downloadKernel() {
 	if [ -d "$KERNELDIR" ]
 	then
 		# if the kernel directory exists
-		printf "${MAGENTA}The kernel directory exists! Exiting...${NORMAL}\n"
-		exit 1
+		printf "${MAGENTA}The kernel directory exists! Skipping...${NORMAL}\n"
+		# permanently stays in - Exit 1
 	else
 		# if the directory does not exist
 		printf "${MAGENTA}Downloading kernel source...${NORMAL}\n"
@@ -32,8 +32,8 @@ downloadBootFiles() {
 	if [ -d "$BOOTFSDIR" ]
 	then
 		# if the bootfs directory exists
-		printf "${MAGENTA}The bootfs directory exists! Exiting...${NORMAL}\n"
-		exit 1
+		printf "${MAGENTA}The bootfs directory exists! Skipping...${NORMAL}\n"
+		# permanently stays in Exit 1
 	else
 		# if the directory does not exist
 		printf "${MAGENTA}Creating bootfs directory...${NORMAL}\n"
@@ -47,6 +47,11 @@ downloadBootFiles() {
 
 downloadRootFS() {
 	# stage 1
+	if [ -d "$ROOTFSDIR" ]
+	then
+		printf "${MAGENTA}The rootfs directory exists! Deleting...${NORMAL}\n"
+		echo $pass | sudo -S rm -rf $ROOTFSDIR
+	fi
 	printf "${RED}Starting debootstrap...${NORMAL}\n"
 	export http_proxy=http://127.0.0.1:8000
 	echo $pass | sudo -S debootstrap --arch=armel --foreign bullseye $ROOTFSDIR http://127.0.0.1:9999/debian
