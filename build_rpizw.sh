@@ -17,11 +17,11 @@ downloadKernel() {
 	if [ -d "$KERNELDIR" ]
 	then
 		# if the kernel directory exists
-		printf "${MAGENTA}The kernel directory exists! Skipping...${NORMAL}\n"
+		printf "${RED}The kernel directory exists! Skipping...${NORMAL}\n"
 		# permanently stays in - Exit 1
 	else
 		# if the directory does not exist
-		printf "${MAGENTA}Downloading kernel source...${NORMAL}\n"
+		printf "${RED}Downloading kernel source...${NORMAL}\n"
 		git clone --depth=1 https://github.com/raspberrypi/linux $KERNELDIR
 		#git clone https://github.com/orangepi-xunlong/OrangePiRDA_external.git $KERNELDIR
 	fi
@@ -32,13 +32,13 @@ downloadBootFiles() {
 	if [ -d "$BOOTFSDIR" ]
 	then
 		# if the bootfs directory exists
-		printf "${MAGENTA}The bootfs directory exists! Skipping...${NORMAL}\n"
+		printf "${RED}The bootfs directory exists! Skipping...${NORMAL}\n"
 		# permanently stays in Exit 1
 	else
 		# if the directory does not exist
-		printf "${MAGENTA}Creating bootfs directory...${NORMAL}\n"
+		printf "${RED}Creating bootfs directory...${NORMAL}\n"
 		mkdir -p $BOOTFSDIR
-		printf "${MAGENTA}Copy boot files...${NORMAL}\n"
+		printf "${RED}Copy boot files...${NORMAL}\n"
 		cp ~/rpi_boot_files.tar.gz $BOOTFSDIR
 		printf "${RED}Extracting boot files...${NORMAL}\n"
 		tar xzf ~/rpi_boot_files.tar.gz -C $BOOTFSDIR/
@@ -49,7 +49,7 @@ downloadRootFS() {
 	# stage 1
 	if [ -d "$ROOTFSDIR" ]
 	then
-		printf "${MAGENTA}The rootfs directory exists! Deleting...${NORMAL}\n"
+		printf "${RED}The rootfs directory exists! Deleting...${NORMAL}\n"
 		echo $pass | sudo -S rm -rf $ROOTFSDIR
 	fi
 	printf "${RED}Starting debootstrap...${NORMAL}\n"
@@ -61,7 +61,7 @@ downloadRootFS() {
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt install -y locales"
 	printf "${RED}Setting up locales...${NORMAL}\n"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'echo "en_US.UTF-8 UTF-8" > /etc/locale.gen'
-	echo $pass | sudo -S chroot rpi/rootfs /usr/bin/qemu-arm-static /bin/bash -c 'printf "LC_CTYPE=\"en_US.UTF-8\"" > /etc/apt/sources.list'
+	echo $pass | sudo -S chroot rpi/rootfs /usr/bin/qemu-arm-static /bin/bash -c 'printf "LC_CTYPE=\"en_US.UTF-8\"" > /etc/default/locale'
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'LANG="en_US.UTF-8"'
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'locale-gen'
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'export LC_ALL="en_US.UTF-8"'
@@ -137,7 +137,7 @@ kernelRebuild() {
 
 copyKernelFiles() {
 	# stage 2
-	printf "${CYAN}Copiing kernel files to boot dir...${NORMAL}\n"
+	printf "${RED}Copiing kernel files to boot dir...${NORMAL}\n"
 	mkdir -p $BOOTFSDIR/overlays
 	cp $KERNELDIR/arch/arm/boot/zImage $BOOTFSDIR/
 	cp $KERNELDIR/arch/arm/boot/dts/bcm2835-rpi-zero-w.dtb $BOOTFSDIR/	
