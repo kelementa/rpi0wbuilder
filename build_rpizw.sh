@@ -60,10 +60,10 @@ downloadRootFS() {
 	printf "${RED}Installing locales...${NORMAL}\n"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt install -y locales"
 	printf "${RED}Setting up locales...${NORMAL}\n"
-	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'echo "hu_HU.UTF-8 UTF-8" > /etc/locale.gen'
-	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'LANG="hu_HU.UTF-8"'
+	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'echo "en_US.UTF-8 UTF-8" > /etc/locale.gen'
+	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'LANG="en_US.UTF-8"'
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'locale-gen'
-	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'export LC_ALL="hu_HU.UTF-8"'
+	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'export LC_ALL="en_US.UTF-8"'
 
 	printf "${RED}Disabling cert checking temporally...${NORMAL}\n"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "echo 'Acquire::https::deb.debian.org::Verify-Peer "false";' > /etc/apt/apt.conf.d/99debianorg-cert"
