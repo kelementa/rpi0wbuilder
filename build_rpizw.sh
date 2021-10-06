@@ -22,6 +22,7 @@ downloadKernel() {
 	else
 		# if the directory does not exist
 		printf "${RED}Downloading kernel source...${NORMAL}\n"
+		mkdir -p $ROOTDIR
 		tar xvzf ~/linux.tar.gz -C $ROOTDIR
 		#git clone --depth=1 https://github.com/raspberrypi/linux $KERNELDIR
 	fi
