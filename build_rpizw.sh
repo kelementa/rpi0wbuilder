@@ -75,6 +75,13 @@ downloadRootFS() {
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt update"
 	printf "${RED}Installing packages...${NORMAL}\n"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "DEBIAN_FRONTEND=noninteractive apt install -y keyboard-configuration console-setup firmware-brcm80211 wpasupplicant net-tools aptitude ca-certificates crda fake-hwclock gnupg man-db manpages ntp usb-modeswitch ssh wget xz-utils locales"
+	printf "${RED}Adding non-free...${NORMAL}\n"
+	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'rm /etc/apt/sources.list'
+	echo $pass | sudo -S chroot rpi/rootfs /usr/bin/qemu-arm-static /bin/bash -c 'printf "deb http://127.0.0.1:9999/debian bullseye main non-free" > $ROOTFSDIR/etc/apt/sources.list'
+	printf "${RED}Updating packages...${NORMAL}\n"
+	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt update"
+	printf "${RED}Installing firmware-brcm80211...${NORMAL}\n"
+	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt install -y firmware-brcm80211"
 }
 
 
