@@ -22,7 +22,7 @@ downloadKernel() {
 	else
 		# if the directory does not exist
 		printf "${RED}Downloading kernel source...${NORMAL}\n"
-		tar xvzf linux.tar.gz -C ~/rpi0wbuilder/rpi/
+		tar xvzf ~/linux.tar.gz -C ~/rpi0wbuilder/rpi/
 		#git clone --depth=1 https://github.com/raspberrypi/linux $KERNELDIR
 	fi
 }
