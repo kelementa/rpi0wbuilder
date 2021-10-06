@@ -61,6 +61,7 @@ downloadRootFS() {
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt install -y locales"
 	printf "${RED}Setting up locales...${NORMAL}\n"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'echo "en_US.UTF-8 UTF-8" > /etc/locale.gen'
+	echo $pass | sudo -S chroot rpi/rootfs /usr/bin/qemu-arm-static /bin/bash -c 'printf "LC_CTYPE="en_US.UTF-8" > /etc/apt/sources.list'
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'LANG="en_US.UTF-8"'
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'locale-gen'
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'export LC_ALL="en_US.UTF-8"'
@@ -68,7 +69,7 @@ downloadRootFS() {
 	printf "${RED}Disabling cert checking temporally...${NORMAL}\n"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "echo 'Acquire::https::deb.debian.org::Verify-Peer "false";' > /etc/apt/apt.conf.d/99debianorg-cert"
 	printf "${RED}Creating sources.list...${NORMAL}\n"
-	echo $pass | sudo -S bash -c 'printf "deb http://127.0.0.1:9999/debian bullseye main non-free" > $ROOTFSDIR/etc/apt/sources.list'
+	echo $pass | sudo -S bash -c 'printf "deb http://127.0.0.1:9999/debian bullseye main non-free" > /etc/apt/sources.list'
 	printf "${RED}Installing software-properites-common...${NORMAL}\n"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt install -y software-properties-common"
 	#printf "${RED}Adding non-free repository...${NORMAL}\n"
@@ -76,14 +77,14 @@ downloadRootFS() {
 	printf "${RED}Updating packages...${NORMAL}\n"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt update"
 	printf "${RED}Installing packages...${NORMAL}\n"
-	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "DEBIAN_FRONTEND=noninteractive apt install -y keyboard-configuration console-setup wpasupplicant net-tools aptitude ca-certificates crda fake-hwclock gnupg man-db manpages ntp usb-modeswitch ssh wget xz-utils locales"
-	printf "${RED}Adding non-free...${NORMAL}\n"
-	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'rm /etc/apt/sources.list'
-	echo $pass | sudo -S chroot rpi/rootfs /usr/bin/qemu-arm-static /bin/bash -c 'printf "deb http://127.0.0.1:9999/debian bullseye main non-free" > $ROOTFSDIR/etc/apt/sources.list'
-	printf "${RED}Updating packages...${NORMAL}\n"
-	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt update"
-	printf "${RED}Installing firmware-brcm80211...${NORMAL}\n"
-	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt install -y firmware-brcm80211"
+	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "DEBIAN_FRONTEND=noninteractive apt install -y keyboard-configuration console-setup wpasupplicant net-tools aptitude ca-certificates crda fake-hwclock gnupg man-db manpages ntp usb-modeswitch ssh wget xz-utils locales firmware-brcm80211"
+	#printf "${RED}Adding non-free...${NORMAL}\n"
+	#echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'rm /etc/apt/sources.list'
+	#echo $pass | sudo -S chroot rpi/rootfs /usr/bin/qemu-arm-static /bin/bash -c 'printf "deb http://127.0.0.1:9999/debian bullseye main non-free" > $ROOTFSDIR/etc/apt/sources.list'
+	#printf "${RED}Updating packages...${NORMAL}\n"
+	#echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt update"
+	#printf "${RED}Installing firmware-brcm80211...${NORMAL}\n"
+	#echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt install -y firmware-brcm80211"
 }
 
 
