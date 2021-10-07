@@ -121,7 +121,7 @@ kernelBuild() {
 	KERNEL=kernel
 	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- bcmrpi_defconfig
 	scripts/config --enable CONFIG_USB_OTG --disable USB_OTG_FSM --disable USB_ZERO_HNPTEST
-	make -j12 ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- zImage modules dtbs
+	make -j4 ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- zImage modules dtbs
 }
 
 kernelRebuild() {
@@ -166,6 +166,7 @@ addFilesToRootFS() {
 	printf "${RED}[ Setting up root password... ]${NORMAL}\n"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "echo -e \"1234\n1234\" | passwd"
 	printf "${RED}[ Creating wpa_supplicant config... ]${NORMAL}\n"
+	
 	echo $pass | sudo sh -c 'printf "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=HU\nnetwork={\nssid=Bubb_L\npsk augusztus\nkey_mgmt=WPA-PSK\n}\n" > rpi/rootfs/etc/wpa_supplicant/wpa_supplicant.conf'
 	
 	
