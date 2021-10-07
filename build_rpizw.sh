@@ -121,7 +121,7 @@ kernelBuild() {
 	KERNEL=kernel
 	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- bcmrpi_defconfig
 	scripts/config --enable CONFIG_USB_OTG --disable USB_OTG_FSM --disable USB_ZERO_HNPTEST
-	make -j4 ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- zImage modules dtbs
+	make -j2 ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- zImage modules dtbs
 }
 
 kernelRebuild() {
@@ -133,7 +133,7 @@ kernelRebuild() {
 	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- bcmrpi_defconfig
 	scripts/config --enable CONFIG_USB_OTG --disable USB_OTG_FSM --disable USB_ZERO_HNPTEST
 	make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- menuconfig
-	make -j4 ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- zImage modules dtbs
+	make -j2 ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- zImage modules dtbs
 }
 
 copyKernelFiles() {
