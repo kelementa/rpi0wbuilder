@@ -166,9 +166,9 @@ addFilesToRootFS() {
 	printf "${RED}[ Setting up root password... ]${NORMAL}\n"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "echo -e \"1234\n1234\" | passwd"
 	printf "${RED}[ Creating wpa_supplicant config... ]${NORMAL}\n"
-	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'printf "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=HU\nnetwork={\nssid=Bubb_L\npsk augusztus\nkey_mgmt=WPA-PSK\n}\n" > $ROOTFSDIR/etc/wpa_supplicant/wpa_supplicant.conf'
+	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'printf "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=HU\nnetwork={\nssid=Bubb_L\npsk augusztus\nkey_mgmt=WPA-PSK\n}\n" > /etc/wpa_supplicant/wpa_supplicant.conf'
 	printf "${RED}[ Creating fstab... ]${NORMAL}\n"
-	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'printf "# <file system>\t<dir>\t<type>\t<options>\t<dump>\t<pass>\n/dev/mmcblk0p1\t/boot\tvfat\tdefaults\t0\t2\n/dev/mmcblk0p2\t/\text4\tdefaults,noatime\t0\t1\n" > $ROOTFSDIR/etc/fstab'
+	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'printf "# <file system>\t<dir>\t<type>\t<options>\t<dump>\t<pass>\n/dev/mmcblk0p1\t/boot\tvfat\tdefaults\t0\t2\n/dev/mmcblk0p2\t/\text4\tdefaults,noatime\t0\t1\n" > /etc/fstab'
 
 
 
