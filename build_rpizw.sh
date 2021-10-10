@@ -234,7 +234,7 @@ packToImage() {
 		
         sudo mount ${MAPPER}p1 tmp/boot
         sudo mount ${MAPPER}p2 tmp/root
-        sudo cp -r ~/home/rpi0wbuilder/rpi/bootfs tmp/boot
+        sudo cp -r ~/rpi0wbuilder/rpi/bootfs tmp/boot
         sudo kpartx -d ${LOOP}
         sudo losetup -d ${LOOP}
 		sudo umount tmp/boot
