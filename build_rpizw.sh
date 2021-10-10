@@ -233,8 +233,9 @@ packToImage() {
         fi
         mkdir -p tmp/boot
         mkdir -p tmp/root
-        sudo mount ${$MAPPER}p1 tmp/boot
-        sudo mount ${$MAPPER}p2 tmp/root
+		
+        sudo mount ${MAPPER}p1 tmp/boot
+        sudo mount ${MAPPER}p2 tmp/root
         sudo cp -r ~/home/rpi0wbuilder/rpi/bootfs tmp/boot
         sudo umount tmp/boot
         sudo umount tmp/root
