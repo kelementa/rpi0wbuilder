@@ -219,15 +219,13 @@ packToImage() {
 		sudo dd if=/dev/zero of=image.img bs=1M count=256
         LOOP=$(sudo losetup -f --show image.img)
         MAPPER="/dev/mapper/"$(echo ${LOOP} | sed 's/\/dev\///')
-        echo $LOOP
-        echo $MAPPER
+        echo "Loop node path: " $LOOP
+        echo "Mapper node path: " $MAPPER
         echo -e "o\nn\np\n1\n\n+64M\na\nt\nb\nn\np\n2\n\n\np\nw" | sudo fdisk ${LOOP}
         sudo kpartx -av ${LOOP}
         sudo mkfs.vfat ${MAPPER}p1
-        echo $MAPPER
         sudo mkfs.ext3 ${MAPPER}p2
-        sudo kpartx -d ${LOOP}
-        sudo losetup -d ${LOOP}
+        
         if [ -d tmp ]; then
                 rm -rf tmp/
         fi
@@ -237,7 +235,9 @@ packToImage() {
         sudo mount ${MAPPER}p1 tmp/boot
         sudo mount ${MAPPER}p2 tmp/root
         sudo cp -r ~/home/rpi0wbuilder/rpi/bootfs tmp/boot
-        sudo umount tmp/boot
+        sudo kpartx -d ${LOOP}
+        sudo losetup -d ${LOOP}
+		sudo umount tmp/boot
         sudo umount tmp/root
 	
 }
