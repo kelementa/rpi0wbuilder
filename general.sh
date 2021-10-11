@@ -24,6 +24,7 @@ ROOTDIR=${TOPDIR}/rpi
 KERNELDIR=${ROOTDIR}/linux
 BOOTFSDIR=${ROOTDIR}/bootfs
 ROOTFSDIR=${ROOTDIR}/rootfs
+IMAGENAME="image.img"
 
 showColors() {
     printf "${BLACK}The color is BLACK${NORMAL}\n"

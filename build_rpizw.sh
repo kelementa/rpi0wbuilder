@@ -212,6 +212,35 @@ secondStage() {
 	printf "${LIME_YELLOW}[ Second Stage running time was ${SECONDS} seconds. ]${NORMAL}\n"
 }
 
+packToImage() {
+	
+	
+		printf "${RED}[ Compressing the built system... ]${NORMAL}\n"
+		sudo dd if=/dev/zero of=image.img bs=1M count=256
+        LOOP=$(sudo losetup -f --show image.img)
+        MAPPER="/dev/mapper/"$(echo ${LOOP} | sed 's/\/dev\///')
+        echo $LOOP
+        echo $MAPPER
+        echo -e "o\nn\np\n1\n\n+64M\na\nt\nb\nn\np\n2\n\n\np\nw" | sudo fdisk ${LOOP}
+        sudo kpartx -av ${LOOP}
+        sudo mkfs.vfat ${MAPPER}p1
+        echo $MAPPER
+        sudo mkfs.ext3 ${MAPPER}p2
+        sudo kpartx -d ${LOOP}
+        sudo losetup -d ${LOOP}
+        if [ -d tmp ]; then
+                rm -rf tmp/
+        fi
+        mkdir -p tmp/boot
+        mkdir -p tmp/root
+        sudo mount ${$MAPPER}p1 tmp/boot
+        sudo mount ${$MAPPER}p2 tmp/root
+        sudo cp -r ~/home/rpi0wbuilder/rpi/bootfs tmp/boot
+        sudo umount tmp/boot
+        sudo umount tmp/root
+	
+}
+
 print_usage() {
 	cat << EOF
 	Usage: $0 <options>
@@ -221,6 +250,7 @@ print_usage() {
 		-c compress the built directory
 		-r clean and rebuild kernel with menuconfig
 		-a add files to root FS
+		.p create image
 EOF
 }
 
@@ -229,7 +259,7 @@ if [[ $# = 0 ]]; then
 	exit 1
 fi
 
-while getopts hfscra options; do
+while getopts hfscrap options; do
 	case $options in
 		h)
 			print_usage
@@ -249,6 +279,9 @@ while getopts hfscra options; do
 			;;
 		a)
 			addFilesToRootFS
+			;;
+		p)
+			packToImage
 			;;
 		*)
 			 printf "${RED}[ Unknown parameter added ]${NORMAL}\n"
