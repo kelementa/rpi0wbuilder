@@ -236,9 +236,9 @@ packToImage() {
         sudo mount ${MAPPER}p1 tmp/boot
         sudo mount ${MAPPER}p2 tmp/root
 		printf "${RED}[ Copiing boot directory... ]${NORMAL}\n"
-        sudo cp -r ~/rpi0wbuilder/rpi/bootfs/ tmp/boot
+        sudo cp -r ~/rpi0wbuilder/rpi/bootfs/* tmp/boot
 		printf "${RED}[ Copiing root directory... ]${NORMAL}\n"
-		sudo cp -r ~/rpi0wbuilder/rpi/rootfs/ tmp/root
+		sudo cp -r ~/rpi0wbuilder/rpi/rootfs/* tmp/root
         printf "${RED}[ Unmounting loop nodes... ]${NORMAL}\n"
 		sudo kpartx -d ${LOOP}
         sudo losetup -d ${LOOP}
