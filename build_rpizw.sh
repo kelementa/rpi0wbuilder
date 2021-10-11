@@ -189,15 +189,17 @@ compressImage() {
 
 firstStage() {
 	# first stage
+	SECONDS=0
 	installPackagesOnHost
 	downloadKernel
 	downloadBootFiles
 	downloadRootFS
-	
+	printf "${LIME_YELLOW}[ First Stage running time was ${SECONDS} seconds. ]${NORMAL}\n"
 }
 
 secondStage() {
 	# second stage
+	SECONDS=0
 	kernelBuild
 	copyKernelFiles
 	installModules
@@ -205,6 +207,7 @@ secondStage() {
 	createCmdLineTXT
 	addFilesToRootFS
 	compressImage
+	printf "${LIME_YELLOW}[ Second Stage running time was ${SECONDS} seconds. ]${NORMAL}\n"
 }
 
 print_usage() {
