@@ -240,6 +240,7 @@ packToImage() {
 		printf "${RED}[ Copiing root directory... ]${NORMAL}\n"
 		sudo cp -r ~/rpi0wbuilder/rpi/rootfs/* tmp/root
         printf "${RED}[ Unmounting loop nodes... ]${NORMAL}\n"
+		sync
 		sudo kpartx -d ${LOOP}
         sudo losetup -d ${LOOP}
 		sync
