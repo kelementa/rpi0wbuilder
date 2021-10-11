@@ -213,32 +213,40 @@ secondStage() {
 }
 
 packToImage() {
-	
-	
-		printf "${RED}[ Compressing the built system... ]${NORMAL}\n"
-		sudo dd if=/dev/zero of=image.img bs=1M count=256
-        LOOP=$(sudo losetup -f --show image.img)
+		printf "${RED}[ Creating emtpy image... ]${NORMAL}\n"
+		sudo dd if=/dev/zero of=image.img bs=1M count=1024
+		LOOP=$(sudo losetup -f --show image.img)
         MAPPER="/dev/mapper/"$(echo ${LOOP} | sed 's/\/dev\///')
-        echo "Loop node path: " $LOOP
-        echo "Mapper node path: " $MAPPER
+		printf "${RED}[ LOOP and MAPPER node parameters are ${LOOP} and ${MAPPER} ]${NORMAL}\n"
+        printf "${RED}[ Creating partitions in the image file... ]${NORMAL}\n"
         echo -e "o\nn\np\n1\n\n+64M\na\nt\nb\nn\np\n2\n\n\np\nw" | sudo fdisk ${LOOP}
-        sudo kpartx -av ${LOOP}
-        sudo mkfs.vfat ${MAPPER}p1
-        sudo mkfs.ext3 ${MAPPER}p2
-        
-        if [ -d tmp ]; then
+        printf "${RED}[ Setting up nodes... ]${NORMAL}\n"
+		sudo kpartx -av ${LOOP}
+        printf "${RED}[ Formatting the boot partition... ]${NORMAL}\n"
+		sudo mkfs.vfat ${MAPPER}p1
+        printf "${RED}[ Formatting the root partition... ]${NORMAL}\n"
+		sudo mkfs.ext3 ${MAPPER}p2
+        printf "${RED}[ Cleaning up the temp folder... ]${NORMAL}\n"
+		if [ -d tmp ]; then
                 rm -rf tmp/
         fi
         mkdir -p tmp/boot
         mkdir -p tmp/root
-		
+		printf "${RED}[ Mounting the loop nodes... ]${NORMAL}\n"
         sudo mount ${MAPPER}p1 tmp/boot
         sudo mount ${MAPPER}p2 tmp/root
-        sudo cp -r ~/rpi0wbuilder/rpi/bootfs tmp/boot
-        sudo kpartx -d ${LOOP}
+		printf "${RED}[ Copiing boot directory... ]${NORMAL}\n"
+        sudo cp -r ~/rpi0wbuilder/rpi/bootfs/ tmp/boot
+		printf "${RED}[ Copiing root directory... ]${NORMAL}\n"
+		sudo cp -r ~/rpi0wbuilder/rpi/rootfs/ tmp/root
+        printf "${RED}[ Unmounting loop nodes... ]${NORMAL}\n"
+		sudo kpartx -d ${LOOP}
         sudo losetup -d ${LOOP}
+		sync
+		printf "${RED}[ Unmounting temp directory... ]${NORMAL}\n"
 		sudo umount tmp/boot
         sudo umount tmp/root
+		printf "${LIME_YELLOW}[ Image file created. ]${NORMAL}\n"
 	
 }
 
