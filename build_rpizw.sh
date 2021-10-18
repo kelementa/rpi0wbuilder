@@ -98,7 +98,7 @@ createConfigTXT() {
 	device_tree=bcm2835-rpi-zero-w.dtb
 	dtoverlay=disable-bt
 	hdmi_force_hotplug=1
-	hdmi_cvt=640 480 60 1 0 0 0
+	hdmi_cvt=800 600 60 1 0 0 0
 	hdmi_group=2
 	hdmi_mode=87
 EOF
