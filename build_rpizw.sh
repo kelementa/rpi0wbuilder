@@ -78,12 +78,8 @@ downloadRootFS() {
 	printf "${RED}[ Updating packages... ]${NORMAL}\n"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt update"
 	printf "${RED}[ Installing packages... ]${NORMAL}\n"
-<<<<<<< HEAD
 	# removed firmware-brcm80211, internal wifi
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "DEBIAN_FRONTEND=noninteractive apt install -y wireless-tools sudo mc keyboard-configuration console-setup wpasupplicant net-tools aptitude ca-certificates crda fake-hwclock gnupg man-db manpages ntp usb-modeswitch ssh wget xz-utils locales firmware-realtek"
-=======
-	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "DEBIAN_FRONTEND=noninteractive apt install -y pciutils wireless-tools mc keyboard-configuration console-setup wpasupplicant net-tools aptitude ca-certificates crda fake-hwclock gnupg man-db manpages ntp usb-modeswitch ssh wget xz-utils locales firmware-brcm80211"
->>>>>>> 8a33c9f69723d27a13621fe7fb54fcf7df8cfdf1
 	#printf "${RED}Adding non-free...${NORMAL}\n"
 	#echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'rm /etc/apt/sources.list'
 	#echo $pass | sudo -S chroot rpi/rootfs /usr/bin/qemu-arm-static /bin/bash -c 'printf "deb http://127.0.0.1:9999/debian bullseye main non-free" > $ROOTFSDIR/etc/apt/sources.list'
