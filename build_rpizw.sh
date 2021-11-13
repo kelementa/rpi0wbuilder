@@ -68,9 +68,9 @@ downloadRootFS() {
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'export LC_ALL="en_US.UTF-8"'
 
 	printf "${RED}[ Disabling cert checking temporally... ]${NORMAL}\n"
-	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "echo 'Acquire::https::deb.debian.org::Verify-Peer "false";' > /etc/apt/apt.conf.d/99debianorg-cert"
+	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "echo 'Acquire::https::deb.debian.org::Verify-Peer "false";' > ${ROOTFS}/etc/apt/apt.conf.d/99debianorg-cert"
 	printf "${RED}[ Creating sources.list... ]${NORMAL}\n"
-	echo $pass | sudo -S bash -c 'printf "deb http://127.0.0.1:9999/debian bullseye main non-free" > /etc/apt/sources.list'
+	echo $pass | sudo -S bash -c 'printf "deb http://127.0.0.1:9999/debian bullseye main non-free" > ${ROOTFS}/etc/apt/sources.list'
 	printf "${RED}[ Installing software-properites-common...${NORMAL}\n"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt install -y software-properties-common"
 	#printf "${RED}Adding non-free repository...${NORMAL}\n"
