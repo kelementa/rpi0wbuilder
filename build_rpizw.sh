@@ -78,7 +78,8 @@ downloadRootFS() {
 	printf "${RED}[ Updating packages... ]${NORMAL}\n"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "apt update"
 	printf "${RED}[ Installing packages... ]${NORMAL}\n"
-	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "DEBIAN_FRONTEND=noninteractive apt install -y wireless-tools mc keyboard-configuration console-setup wpasupplicant net-tools aptitude ca-certificates crda fake-hwclock gnupg man-db manpages ntp usb-modeswitch ssh wget xz-utils locales firmware-brcm80211"
+	# removed firmware-brcm80211, internal wifi
+	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c "DEBIAN_FRONTEND=noninteractive apt install -y wireless-tools sudo mc keyboard-configuration console-setup wpasupplicant net-tools aptitude ca-certificates crda fake-hwclock gnupg man-db manpages ntp usb-modeswitch ssh wget xz-utils locales firmware-realtek"
 	#printf "${RED}Adding non-free...${NORMAL}\n"
 	#echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'rm /etc/apt/sources.list'
 	#echo $pass | sudo -S chroot rpi/rootfs /usr/bin/qemu-arm-static /bin/bash -c 'printf "deb http://127.0.0.1:9999/debian bullseye main non-free" > $ROOTFSDIR/etc/apt/sources.list'
@@ -96,9 +97,11 @@ createConfigTXT() {
 	kernel=zImage
 	enable_uart=1
 	device_tree=bcm2835-rpi-zero-w.dtb
-	dtoverlay=disable-bt
+	#disabled internal wifi and bt
+	dtoverlay=pi3-disable-bt
+	dtoverlay=pi3-disable-wifi
 	hdmi_force_hotplug=1
-	hdmi_cvt=640 480 60 1 0 0 0
+	hdmi_cvt=800 600 60 1 0 0 0
 	hdmi_group=2
 	hdmi_mode=87
 EOF
@@ -108,7 +111,7 @@ createCmdLineTXT() {
 	# stage 2
 	printf "${RED}[ Creating cmdline.txt in rootfs... ]${NORMAL}\n"
 	cat << EOF >> $BOOTFSDIR/cmdline.txt
-	console=tty1 console=serial0,115200 root=/dev/mmcblk0p2 rootfstype=ext4 rootwait
+	console=tty1 console=serial0,115200 root=/dev/mmcblk0p2 rootfstype=ext4 rootwait net.ifnames=0
 EOF
 }
 
@@ -171,8 +174,8 @@ addFilesToRootFS() {
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'printf "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=HU\nnetwork={\nssid=Bubb_L\npsk augusztus\nkey_mgmt=WPA-PSK\n}\n" > /etc/wpa_supplicant/wpa_supplicant.conf'
 	printf "${RED}[ Creating fstab... ]${NORMAL}\n"
 	echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'printf "# <file system>\t<dir>\t<type>\t<options>\t<dump>\t<pass>\n/dev/mmcblk0p1\t/boot\tvfat\tdefaults\t0\t2\n/dev/mmcblk0p2\t/\text4\tdefaults,noatime\t0\t1\n" > /etc/fstab'
-
-
+    printf "${RED}[ Creating interfaces... ]${NORMAL}\n"
+    echo $pass | sudo -S chroot $ROOTFSDIR /usr/bin/qemu-arm-static /bin/bash -c 'printf "auto wlan0\niface wlan0 inet dhcp\nwpa-ssid Bubb_L\nwpa-psk augusztus\n" > /etc/network/interfaces.d/wlan'
 
 	
 		
